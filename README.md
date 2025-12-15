@@ -31,3 +31,4 @@ This repo includes three [GitHub actions](https://docs.github.com/en/actions) :
 
 - One to automatically deploy the project to GitHub pages. This workflow executes on each commit in the main branch. **You must update the `base` field in the [vite.config.ts](./vite.config.ts) file to your repository name for this to work !!! And activate GitHub pages source to `GitHub Actions` in your repository settings**.
 - One to check the code formatting, linting and types, this one executes on pull requests.
+
