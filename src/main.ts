@@ -2,26 +2,27 @@ import './style.css'
 const button =
   document.querySelector<HTMLButtonElement>(
     '#add-todo-button',
-  ) /* c'est comme je suis sûre qu'il y de HTMLButtonElement*/
+  ) /* this is how I make sure it’s an HTMLButtonElement */
 const list = document.querySelector<HTMLUListElement>('#todo-elements')
 const input = document.querySelector<HTMLInputElement>('#todo-input')
 const error = document.querySelector<HTMLDivElement>('#error')
 
 if (!input || !button || !list || !error) {
-  /* ! - si les elements n'existe pas */
+  /* ! - if elements doesn't exist */
   throw new Error(
     "Attention !!! Input n'a pas été trouvé sur la page",
-  ) /* je peux aussi utiliser console.logo avant avec message - protege*/
+  ) /* I can also use console.log before message - protection*/
 }
 
 const addTodo = () => {
-  /* rend la valeur du contexte où la fonction a été créée */
+  /* keeps the value in the context where the function was created */
   const value = input.value.trim()
   if (value === '') {
-    error.textContent = 'Veuillez entrer une tâche.'
-    error.style.display = 'block'
+    error.textContent = 'Please enter a task.'
+    error.classList.add('is-visible')
     return
   }
+  error.classList.remove('is-visible')
 
   const li = document.createElement('li')
   li.textContent = value
