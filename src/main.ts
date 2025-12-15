@@ -23,7 +23,6 @@ const addTodo = () => {
     return
   }
 
-  error.style.display = 'none'
   const li = document.createElement('li')
   li.textContent = value
   list.appendChild(li)
