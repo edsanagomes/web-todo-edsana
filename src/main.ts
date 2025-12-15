@@ -1,21 +1,26 @@
 import './style.css'
 
-console.log('Hello from typescript')
-const input = document.getElementById('todo-input') as HTMLInputElement
-const button = document.getElementById('add-todo-button') as HTMLButtonElement
-const list = document.getElementById('todo-elements') as HTMLUListElement
+const button = document.querySelector<HTMLButtonElement>('#add-todo-button') /* c'est comme je suis sûre qu'il y de HTMLButtonElement*/
+const list = document.querySelector<HTMLUListElement>('#todo-elements')
+const input = document.querySelector<HTMLInputElement>('#todo-input')
+
+if (!input || !button || !list) { /* ! - si les elements n'existe pas */
+  throw new Error("Attention !!! Input n'a pas été trouvé sur la page") /* je peux aussi utiliser console.logo avant avec message - protege*/
+}
+
 const error = document.createElement('div')
 error.textContent = 'Veuillez entrer une tâche.'
 error.style.color = 'red'
 error.style.display = 'none'
-button.insertAdjacentElement('beforebegin', error)
+input.insertAdjacentElement('beforebegin', error)
 
-function addTodo() {
+const addTodo = () => { /* rend la valeur du contexte où la fonction a été créée */
   const value = input.value.trim()
   if (value === '') {
     error.style.display = 'block'
     return
   }
+
   error.style.display = 'none'
   const li = document.createElement('li')
   li.textContent = value
