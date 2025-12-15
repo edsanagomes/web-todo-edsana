@@ -7,7 +7,7 @@ const error = document.querySelector<HTMLDivElement>('#error')
 if (!form || !input || !list || !error) {
   /* ! - if elements doesn't exist */
   throw new Error(
-    "Attention !!! Input n'a pas été trouvé sur la page",
+    'Fatal Error: A required DOM element could not be found.',
   ) /* I can also use console.log before message - protection*/
 }
 
@@ -26,7 +26,7 @@ const addTodo = () => {
   input.value = ''
 }
 
-form.addEventListener('submit', (e) => {
+form.addEventListener('submit', (e: SubmitEvent) => {
   e.preventDefault()
   addTodo()
 })
