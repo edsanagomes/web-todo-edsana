@@ -19,3 +19,8 @@ body {
 .add-todo-button {
   padding: 10px 20px;
 }
+
+#error {
+  color: red;
+  display: none;
+}
