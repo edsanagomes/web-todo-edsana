@@ -11,6 +11,19 @@ if (!form || !input || !list || !error) {
   ) /* I can also use console.log before message - protection*/
 }
 
+const todos: string[] = JSON.parse(localStorage.getItem('todos') || '[]')
+
+const renderTodos = () => {
+  list.innerHTML = ''
+  todos.forEach((todo) => {
+    const li = document.createElement('li')
+    li.textContent = todo
+    list.appendChild(li)
+  })
+}
+
+renderTodos()
+
 const addTodo = () => {
   const value = input.value.trim()
   if (value === '') {
@@ -20,9 +33,9 @@ const addTodo = () => {
   }
   error.classList.remove('is-visible')
 
-  const li = document.createElement('li')
-  li.textContent = value
-  list.appendChild(li)
+  todos.push(value)
+  localStorage.setItem('todos', JSON.stringify(todos))
+  renderTodos()
   input.value = ''
 }
 
