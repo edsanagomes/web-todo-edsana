@@ -11,13 +11,34 @@ if (!form || !input || !list || !error) {
   ) /* I can also use console.log before message - protection*/
 }
 
-const todos: string[] = JSON.parse(localStorage.getItem('todos') || '[]')
+type Todo = {
+  id: string
+  text: string
+  completed: boolean
+}
+
+function loadTodos(): Todo[] {
+  const storedTodos = localStorage.getItem('todos')
+  if (!storedTodos) return []
+  try {
+    const parsedTodos = JSON.parse(storedTodos)
+    // A simple validation to ensure it's an array
+    if (Array.isArray(parsedTodos)) {
+      return parsedTodos
+    }
+  } catch (e) {
+    console.error('Failed to load todos.', e)
+  }
+  return [] // Return empty array on failure
+}
+
+const todos: Todo[] = loadTodos()
 
 const renderTodos = () => {
   list.innerHTML = ''
   todos.forEach((todo) => {
     const li = document.createElement('li')
-    li.textContent = todo
+    li.textContent = todo.text
     list.appendChild(li)
   })
 }
@@ -33,7 +54,13 @@ const addTodo = () => {
   }
   error.classList.remove('is-visible')
 
-  todos.push(value)
+  const newTodo: Todo = {
+    id: crypto.randomUUID(),
+    text: value,
+    completed: false,
+  }
+
+  todos.push(newTodo)
   localStorage.setItem('todos', JSON.stringify(todos))
   renderTodos()
   input.value = ''
