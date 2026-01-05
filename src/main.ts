@@ -16,18 +16,30 @@ type Todo = {
   text: string
   completed: boolean
 }
-
 function loadTodos(): Todo[] {
   const storedTodos = localStorage.getItem('todos')
   if (!storedTodos) return []
   try {
     const parsedTodos = JSON.parse(storedTodos)
-    // A simple validation to ensure it's an array
-    if (Array.isArray(parsedTodos)) {
-      return parsedTodos
-    }
+    // Validate that we have an array of valid Todo objects
+    
+   if (
+  Array.isArray(parsedTodos) &&
+  parsedTodos.every(
+    (todo) =>
+      todo &&
+      typeof todo.id === 'string' &&
+      typeof todo.text === 'string' &&
+      typeof todo.completed === 'boolean',
+  )
+) {
+  return parsedTodos
+}
+
   } catch (e) {
-    console.error('Failed to load todos.', e)
+    console.error('Failed to load todos from localStorage.', e)
+    // Clear corrupted data to prevent future errors
+    localStorage.removeItem('todos')
   }
   return [] // Return empty array on failure
 }
