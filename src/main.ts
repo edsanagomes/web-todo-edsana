@@ -11,6 +11,51 @@ if (!form || !input || !list || !error) {
   ) /* I can also use console.log before message - protection*/
 }
 
+type Todo = {
+  id: string
+  text: string
+  completed: boolean
+}
+function loadTodos(): Todo[] {
+  const storedTodos = localStorage.getItem('todos')
+  if (!storedTodos) return []
+  try {
+    const parsedTodos = JSON.parse(storedTodos)
+    // Validate that we have an array of valid Todo objects
+
+    if (
+      Array.isArray(parsedTodos) &&
+      parsedTodos.every(
+        (todo) =>
+          todo &&
+          typeof todo.id === 'string' &&
+          typeof todo.text === 'string' &&
+          typeof todo.completed === 'boolean',
+      )
+    ) {
+      return parsedTodos
+    }
+  } catch (e) {
+    console.error('Failed to load todos from localStorage.', e)
+    // Clear corrupted data to prevent future errors
+    localStorage.removeItem('todos')
+  }
+  return [] // Return empty array on failure
+}
+
+const todos: Todo[] = loadTodos()
+
+const renderTodos = () => {
+  list.innerHTML = ''
+  todos.forEach((todo) => {
+    const li = document.createElement('li')
+    li.textContent = todo.text
+    list.appendChild(li)
+  })
+}
+
+renderTodos()
+
 const addTodo = () => {
   const value = input.value.trim()
   if (value === '') {
@@ -20,9 +65,15 @@ const addTodo = () => {
   }
   error.classList.remove('is-visible')
 
-  const li = document.createElement('li')
-  li.textContent = value
-  list.appendChild(li)
+  const newTodo: Todo = {
+    id: crypto.randomUUID(),
+    text: value,
+    completed: false,
+  }
+
+  todos.push(newTodo)
+  localStorage.setItem('todos', JSON.stringify(todos))
+  renderTodos()
   input.value = ''
 }
 
