@@ -19,7 +19,3 @@ body {
 #error.is-visible {
   display: block;
 }
-
-ul#todo-elements li {
-  cursor: pointer;
-}
