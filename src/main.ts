@@ -11,6 +11,51 @@ if (!form || !input || !list || !error) {
   ) /* I can also use console.log before message - protection*/
 }
 
+type Todo = {
+  id: string
+  text: string
+  completed: boolean
+}
+function loadTodos(): Todo[] {
+  const storedTodos = localStorage.getItem('todos')
+  if (!storedTodos) return []
+  try {
+    const parsedTodos = JSON.parse(storedTodos)
+    // Validate that we have an array of valid Todo objects
+
+    if (
+      Array.isArray(parsedTodos) &&
+      parsedTodos.every(
+        (todo) =>
+          todo &&
+          typeof todo.id === 'string' &&
+          typeof todo.text === 'string' &&
+          typeof todo.completed === 'boolean',
+      )
+    ) {
+      return parsedTodos
+    }
+  } catch (e) {
+    console.error('Failed to load todos from localStorage.', e)
+    // Clear corrupted data to prevent future errors
+    localStorage.removeItem('todos')
+  }
+  return [] // Return empty array on failure
+}
+
+const todos: Todo[] = loadTodos()
+
+const renderTodos = () => {
+  list.innerHTML = ''
+  todos.forEach((todo) => {
+    const li = document.createElement('li')
+    li.textContent = todo.text
+    list.appendChild(li)
+  })
+}
+
+renderTodos()
+
 const addTodo = () => {
   const value = input.value.trim()
   if (value === '') {
@@ -20,9 +65,15 @@ const addTodo = () => {
   }
   error.classList.remove('is-visible')
 
-  const li = document.createElement('li')
-  li.textContent = value
-  list.appendChild(li)
+  const newTodo: Todo = {
+    id: crypto.randomUUID(),
+    text: value,
+    completed: false,
+  }
+
+  todos.push(newTodo)
+  localStorage.setItem('todos', JSON.stringify(todos))
+  renderTodos()
   input.value = ''
 }
 
@@ -30,76 +81,3 @@ form.addEventListener('submit', (e: SubmitEvent) => {
   e.preventDefault()
   addTodo()
 })
-
-interface Task {
-  id: number
-  text: string
-  completed: boolean
-}
-
-const formCheck = document.querySelector<HTMLFormElement>('#todo-form-check')
-const inputCheck = document.querySelector<HTMLInputElement>('#todo-input-check')
-const listCheck = document.querySelector<HTMLUListElement>(
-  '#todo-elements-check',
-)
-
-if (!formCheck || !inputCheck || !listCheck) {
-  throw new Error('Checklist elements not found')
-}
-
-// 1. Charger les données (Acceptance Criteria 2)
-const tasks: Task[] = JSON.parse(localStorage.getItem('tasks') || '[]')
-
-const saveAndRender = () => {
-  // Technique: Stockage dans localStorage
-  localStorage.setItem('tasks', JSON.stringify(tasks))
-  render()
-}
-
-const render = () => {
-  listCheck.innerHTML = ''
-
-  tasks.forEach((task) => {
-    const li = document.createElement('li')
-    li.className = 'todo-item'
-
-    const checkbox = document.createElement('input')
-    checkbox.type = 'checkbox'
-    checkbox.checked = task.completed
-
-    // Action: Toggle completion (Acceptance Criteria 1 & 3)
-    checkbox.addEventListener('change', () => {
-      task.completed = checkbox.checked
-      saveAndRender()
-    })
-
-    const span = document.createElement('span')
-    span.textContent = task.text
-    // Design: Style distinct si complété
-    if (task.completed) {
-      span.classList.add('completed-text')
-    }
-
-    li.append(checkbox, span)
-    listCheck.appendChild(li)
-  })
-}
-
-formCheck.addEventListener('submit', (e) => {
-  e.preventDefault()
-  const val = inputCheck.value.trim()
-  if (val === '') return
-
-  const newTask: Task = {
-    id: Date.now(),
-    text: val,
-    completed: false, // Default: unchecked
-  }
-
-  tasks.push(newTask)
-  inputCheck.value = ''
-  saveAndRender()
-})
-
-// Initialisation
-render()
