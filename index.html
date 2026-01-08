@@ -9,7 +9,7 @@
 </head>
 
 <body>
-  <div class="container">
+  <main class="container">
     <h1>Web todolist app</h1>
     <form class="input-row" id="todo-form">
       <label for="todo-input" style="display: none;">New Todo</label>
@@ -18,7 +18,14 @@
       <button id="add-todo-button" type="submit">add</button>
     </form>
     <ul id="todo-elements"></ul>
-  </div>
+    <h2>checkbox tasks</h2>
+   <form class="input-row" id="todo-form-check">
+    <label for="todo-input-check" style="display: none;">New Task</label>
+    <input id="todo-input-check" type="text" placeholder="New task" />
+    <button type="submit">Add</button>
+  </form>
+  <ul id="todo-elements-check"></ul>
+</main>
   <script type="module" src="/src/main.ts"></script>
 </body>
 
