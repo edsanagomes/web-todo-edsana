@@ -22,7 +22,18 @@ function loadTodos(): Todo[] {
   if (!storedTodos) return []
   try {
     const parsedTodos = JSON.parse(storedTodos)
-    if (Array.isArray(parsedTodos)) return parsedTodos
+    if (
+      Array.isArray(parsedTodos) &&
+      parsedTodos.every(
+        (todo) =>
+          todo &&
+          typeof todo.id === 'string' &&
+          typeof todo.text === 'string' &&
+          typeof todo.completed === 'boolean',
+      )
+    ) {
+      return parsedTodos
+    }
   } catch (e) {
     localStorage.removeItem('todos')
   }
@@ -39,16 +50,16 @@ const renderTodos = () => {
     const span = document.createElement('span')
     span.textContent = todo.text
 
-const removeBtn = document.createElement('button')
-  removeBtn.textContent = 'Remove'
-  removeBtn.className = 'remove-btn'
-    
-  removeBtn.onclick = () => {
-      const index = todos.findIndex(t => t.id === todo.id)
+    const removeBtn = document.createElement('button')
+    removeBtn.textContent = 'Remove'
+    removeBtn.className = 'remove-btn'
+
+    removeBtn.onclick = () => {
+      const index = todos.findIndex((t) => t.id === todo.id)
       if (index !== -1) {
-        todos.splice(index, 1) /*remove from the array*/
-        localStorage.setItem('todos', JSON.stringify(todos)) 
-        renderTodos() 
+        todos.splice(index, 1)
+        localStorage.setItem('todos', JSON.stringify(todos))
+        renderTodos()
       }
     }
 
