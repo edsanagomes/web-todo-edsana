@@ -35,6 +35,7 @@ function loadTodos(): Todo[] {
       return parsedTodos
     }
   } catch (e) {
+    console.error('Failed to parse todos from localStorage.', e)
     localStorage.removeItem('todos')
   }
   return []
