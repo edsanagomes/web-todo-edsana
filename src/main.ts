@@ -16,46 +16,47 @@ type Todo = {
   text: string
   completed: boolean
 }
+
 function loadTodos(): Todo[] {
   const storedTodos = localStorage.getItem('todos')
   if (!storedTodos) return []
   try {
     const parsedTodos = JSON.parse(storedTodos)
-    // Validate that we have an array of valid Todo objects
-
-    if (
-      Array.isArray(parsedTodos) &&
-      parsedTodos.every(
-        (todo) =>
-          todo &&
-          typeof todo.id === 'string' &&
-          typeof todo.text === 'string' &&
-          typeof todo.completed === 'boolean',
-      )
-    ) {
-      return parsedTodos
-    }
+    if (Array.isArray(parsedTodos)) return parsedTodos
   } catch (e) {
-    console.error('Failed to load todos from localStorage.', e)
-    // Clear corrupted data to prevent future errors
     localStorage.removeItem('todos')
   }
-  return [] // Return empty array on failure
+  return []
 }
 
 const todos: Todo[] = loadTodos()
-
 const renderTodos = () => {
-  list.innerHTML = ''
+  list.innerHTML = '' /*clear the list*/
   todos.forEach((todo) => {
     const li = document.createElement('li')
-    li.textContent = todo.text
+    li.className = 'todo-item'
+
+    const span = document.createElement('span')
+    span.textContent = todo.text
+
+const removeBtn = document.createElement('button')
+  removeBtn.textContent = 'Remove'
+  removeBtn.className = 'remove-btn'
+    
+  removeBtn.onclick = () => {
+      const index = todos.findIndex(t => t.id === todo.id)
+      if (index !== -1) {
+        todos.splice(index, 1) /*remove from the array*/
+        localStorage.setItem('todos', JSON.stringify(todos)) 
+        renderTodos() 
+      }
+    }
+
+    li.appendChild(span)
+    li.appendChild(removeBtn)
     list.appendChild(li)
   })
 }
-
-renderTodos()
-
 const addTodo = () => {
   const value = input.value.trim()
   if (value === '') {
@@ -81,3 +82,5 @@ form.addEventListener('submit', (e: SubmitEvent) => {
   e.preventDefault()
   addTodo()
 })
+
+renderTodos()
