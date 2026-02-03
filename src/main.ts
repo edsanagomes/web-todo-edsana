@@ -45,7 +45,6 @@ function loadTodos(): Todo[] {
 }
 
 const todos: Todo[] = loadTodos()
-
 const renderTodos = () => {
   list.innerHTML = ''
   input.value = ''
