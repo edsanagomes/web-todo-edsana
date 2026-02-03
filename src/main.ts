@@ -49,7 +49,7 @@ const todos: Todo[] = loadTodos()
 
 const renderTodos = () => {
   list.innerHTML = ''
-
+  input.value = ''
   todos.forEach((todo) => {
     const li = document.createElement('li')
     li.className = 'todo-item'
@@ -108,9 +108,8 @@ if (deleteAllBtn) {
     if (confirm('Are you sure you want to clear your entire to-do list?')) {
       todos.length = 0
       localStorage.removeItem('todos')
-      location.reload()
+      renderTodos()
+      input.value = ''
     }
   })
 }
-
-renderTodos()
