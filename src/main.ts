@@ -25,24 +25,23 @@ function loadTodos(): Todo[] {
 
   try {
     const parsedTodos = JSON.parse(storedTodos)
-    if (
-      Array.isArray(parsedTodos) &&
-      parsedTodos.every(
-        (todo) =>
-          todo &&
-          typeof todo.id === 'string' &&
-          typeof todo.text === 'string' &&
-          typeof todo.completed === 'boolean',
-      )
-    ) {
-      return parsedTodos
-    }
-  } catch (e) {
-    console.error('Failed to parse todos from localStorage.', e)
-    localStorage.removeItem('todos')
-  }
+    if (!Array.isArray(parsedTodos)) return []
 
-  return []
+    for (const todo of parsedTodos) {
+      if (
+        !todo ||
+        typeof todo.id !== 'string' ||
+        typeof todo.text !== 'string' ||
+        typeof todo.completed !== 'boolean'
+      ) {
+        return []
+      }
+    }
+
+    return parsedTodos
+  } catch {
+    return []
+  }
 }
 
 const todos: Todo[] = loadTodos()
