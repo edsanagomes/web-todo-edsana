@@ -1,10 +1,13 @@
 import './style.css'
-const form = document.querySelector<HTMLFormElement>('#todo-form')
-const list = document.querySelector<HTMLUListElement>('#todo-elements')
-const input = document.querySelector<HTMLInputElement>('#todo-input')
-const error = document.querySelector<HTMLDivElement>('#error')
 
-if (!form || !input || !list || !error) {
+const form = document.querySelector<HTMLFormElement>('#todo-form-check')
+const list = document.querySelector<HTMLUListElement>('#todo-elements-check')
+const input = document.querySelector<HTMLInputElement>('#todo-input-check')
+const error = document.querySelector<HTMLDivElement>('#error-check')
+const dateInput = document.querySelector<HTMLInputElement>('#todo-date-input')
+const deleteAllBtn = document.querySelector<HTMLButtonElement>('#delete-all')
+
+if (!form || !input || !list || !error || !deleteAllBtn || !dateInput) {
   /* ! - if elements doesn't exist */
   throw new Error(
     'Fatal Error: A required DOM element could not be found.',
@@ -15,69 +18,118 @@ type Todo = {
   id: string
   text: string
   completed: boolean
+  dueDate?: string
 }
+
 function loadTodos(): Todo[] {
   const storedTodos = localStorage.getItem('todos')
   if (!storedTodos) return []
+
   try {
     const parsedTodos = JSON.parse(storedTodos)
-    // Validate that we have an array of valid Todo objects
-
-    if (
-      Array.isArray(parsedTodos) &&
-      parsedTodos.every(
-        (todo) =>
-          todo &&
-          typeof todo.id === 'string' &&
-          typeof todo.text === 'string' &&
-          typeof todo.completed === 'boolean',
-      )
-    ) {
-      return parsedTodos
-    }
-  } catch (e) {
-    console.error('Failed to load todos from localStorage.', e)
-    // Clear corrupted data to prevent future errors
-    localStorage.removeItem('todos')
+    return Array.isArray(parsedTodos) ? parsedTodos : []
+  } catch {
+    return []
   }
-  return [] // Return empty array on failure
 }
 
 const todos: Todo[] = loadTodos()
-
 const renderTodos = () => {
   list.innerHTML = ''
+  input.value = ''
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
   todos.forEach((todo) => {
     const li = document.createElement('li')
-    li.textContent = todo.text
+    li.className = 'todo-item'
+
+    const span = document.createElement('span')
+    span.textContent = todo.text
+
+    const dateP = document.createElement('p')
+    if (todo.dueDate) {
+      dateP.textContent = 'Due: ${todo.dueDate}'
+
+      const taskDate = new Date(todo.dueDate)
+      taskDate.setHours(0, 0, 0, 0)
+      const diffTime = taskDate.getTime() - today.getTime()
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+
+      if (diffDays < 0) {
+        li.classList.add('urgent-overdue')
+      } else if (diffDays === 0) {
+        li.classList.add('urgent-today')
+      } else if (diffDays >= 2 && diffDays <= 4) {
+        li.classList.add('urgent-soon')
+      } else if (diffDays > 4) {
+        li.classList.add('urgent-later')
+      }
+    } else {
+      dateP.textContent = 'no due date'
+    }
+
+    const removeBtn = document.createElement('button')
+    removeBtn.textContent = 'Remove'
+    removeBtn.className = 'remove-btn'
+    removeBtn.addEventListener('click', () => {
+      const index = todos.findIndex((t) => t.id === todo.id)
+      if (index !== -1) {
+        todos.splice(index, 1)
+        localStorage.setItem('todos', JSON.stringify(todos))
+        renderTodos()
+      }
+    })
+
+    li.append(span, dateP, removeBtn)
     list.appendChild(li)
   })
 }
 
-renderTodos()
-
 const addTodo = () => {
   const value = input.value.trim()
+  const selectedDate = dateInput.value
+  const today = new Date().toISOString().split('T')[0]
+
   if (value === '') {
     error.textContent = 'Please enter a task.'
     error.classList.add('is-visible')
     return
   }
+
+  if (selectedDate && selectedDate < today) {
+    error.textContent = 'Selected date cannot be in the past.'
+    error.classList.add('is-visible')
+    return
+  }
+
   error.classList.remove('is-visible')
 
   const newTodo: Todo = {
     id: crypto.randomUUID(),
     text: value,
     completed: false,
+    dueDate: selectedDate || undefined,
   }
 
   todos.push(newTodo)
   localStorage.setItem('todos', JSON.stringify(todos))
   renderTodos()
   input.value = ''
+  dateInput.value = ''
 }
 
-form.addEventListener('submit', (e: SubmitEvent) => {
+form.addEventListener('submit', (e) => {
   e.preventDefault()
   addTodo()
 })
+
+deleteAllBtn.addEventListener('click', () => {
+  if (confirm('Clear entire list?')) {
+    todos.length = 0
+    localStorage.removeItem('todos')
+    renderTodos()
+  }
+})
+
+renderTodos()

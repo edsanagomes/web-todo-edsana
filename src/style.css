@@ -5,17 +5,47 @@ body {
   margin: 0;
   justify-content: center;
   text-align: center;
-}
-
-* {
   font-family: Helvetica, Arial, sans-serif;
 }
 
-#error {
-  color: red;
-  display: none;
+.input-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
 }
 
-#error.is-visible {
+.error {
+  color: red;
+  display: none;
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.error.is-visible {
   display: block;
+}
+
+.todo-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  margin: 5px 0;
+  border-radius: 5px;
+  border-bottom: 1px solid #eee;
+}
+
+.urgent-overdue {
+  background-color: #ffadad;
+}
+.urgent-today {
+  background-color: #ffd6a5;
+}
+.urgent-soon {
+  background-color: #fdffb6;
+}
+.urgent-later {
+  background-color: #caffbf;
 }
