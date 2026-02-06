@@ -24,6 +24,7 @@ type Todo = {
 function loadTodos(): Todo[] {
   const storedTodos = localStorage.getItem('todos')
   if (!storedTodos) return []
+
   try {
     const parsedTodos = JSON.parse(storedTodos)
     if (!Array.isArray(parsedTodos)) return []
@@ -37,6 +38,7 @@ function loadTodos(): Todo[] {
         return []
       }
     }
+
     return parsedTodos
   } catch {
     return []
@@ -44,9 +46,9 @@ function loadTodos(): Todo[] {
 }
 
 const todos: Todo[] = loadTodos()
-
 const renderTodos = () => {
   list.innerHTML = ''
+  input.value = ''
   todos.forEach((todo) => {
     const li = document.createElement('li')
     li.className = 'todo-item'
