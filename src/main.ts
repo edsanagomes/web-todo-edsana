@@ -1,12 +1,13 @@
 import './style.css'
 
-const form = document.querySelector<HTMLFormElement>('#todo-form')
-const list = document.querySelector<HTMLUListElement>('#todo-elements')
-const input = document.querySelector<HTMLInputElement>('#todo-input')
-const error = document.querySelector<HTMLDivElement>('#error')
+const form = document.querySelector<HTMLFormElement>('#todo-form-check')
+const list = document.querySelector<HTMLUListElement>('#todo-elements-check')
+const input = document.querySelector<HTMLInputElement>('#todo-input-check')
+const error = document.querySelector<HTMLDivElement>('#error-check')
+const dateInput = document.querySelector<HTMLInputElement>('#todo-date-input')
 const deleteAllBtn = document.querySelector<HTMLButtonElement>('#delete-all')
 
-if (!form || !input || !list || !error || !deleteAllBtn) {
+if (!form || !input || !list || !error || !deleteAllBtn || !dateInput) {
   /* ! - if elements doesn't exist */
   throw new Error(
     'Fatal Error: A required DOM element could not be found.',
@@ -17,6 +18,7 @@ type Todo = {
   id: string
   text: string
   completed: boolean
+  dueDate?: string
 }
 
 function loadTodos(): Todo[] {
@@ -26,7 +28,6 @@ function loadTodos(): Todo[] {
   try {
     const parsedTodos = JSON.parse(storedTodos)
     if (!Array.isArray(parsedTodos)) return []
-
     for (const todo of parsedTodos) {
       if (
         !todo ||
@@ -55,10 +56,16 @@ const renderTodos = () => {
     const span = document.createElement('span')
     span.textContent = todo.text
 
+    const dateP = document.createElement('p')
+    if (todo.dueDate) {
+      dateP.textContent = 'Due: ${todo.dueDate}'
+    } else {
+      dateP.textContent = 'no due date'
+    }
+
     const removeBtn = document.createElement('button')
     removeBtn.textContent = 'Remove'
     removeBtn.className = 'remove-btn'
-
     removeBtn.addEventListener('click', () => {
       const index = todos.findIndex((t) => t.id === todo.id)
       if (index !== -1) {
@@ -68,16 +75,24 @@ const renderTodos = () => {
       }
     })
 
-    li.append(span, removeBtn)
+    li.append(span, dateP, removeBtn)
     list.appendChild(li)
   })
 }
 
 const addTodo = () => {
   const value = input.value.trim()
+  const selectedDate = dateInput.value
+  const today = new Date().toISOString().split('T')[0]
 
   if (value === '') {
     error.textContent = 'Please enter a task.'
+    error.classList.add('is-visible')
+    return
+  }
+
+  if (selectedDate && selectedDate < today) {
+    error.textContent = 'Selected date cannot be in the past.'
     error.classList.add('is-visible')
     return
   }
@@ -88,12 +103,14 @@ const addTodo = () => {
     id: crypto.randomUUID(),
     text: value,
     completed: false,
+    dueDate: selectedDate || undefined,
   }
 
   todos.push(newTodo)
   localStorage.setItem('todos', JSON.stringify(todos))
   renderTodos()
   input.value = ''
+  dateInput.value = ''
 }
 
 form.addEventListener('submit', (e) => {
@@ -103,11 +120,12 @@ form.addEventListener('submit', (e) => {
 
 if (deleteAllBtn) {
   deleteAllBtn.addEventListener('click', () => {
-    if (confirm('Are you sure you want to clear your entire to-do list?')) {
+    if (confirm('Clear entire list?')) {
       todos.length = 0
       localStorage.removeItem('todos')
       renderTodos()
-      input.value = ''
     }
   })
 }
+
+renderTodos()

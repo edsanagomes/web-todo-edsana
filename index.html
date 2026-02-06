@@ -14,17 +14,20 @@
     
     <form class="input-row" id="todo-form">
       <div id="error" class="error"></div>
-      <input id="todo-input" type="text" placeholder="New todo" label="New todo" />
+      <input id="todo-input" type="text" placeholder="New todo" aria-label="New todo" />
       <button id="add-todo-button" type="submit">Add</button>
     </form>
     <ul id="todo-elements"></ul> 
-    <h2>checkbox tasks</h2>
-    <form class="input-row" id="todo-form-check">
-      <input id="todo-input-check" type="text" placeholder="New task" />
-      <button type="submit">Add</button>
-    </form>
-    
-    <ul id="todo-elements-check"></ul> 
+
+    <h2>checkbox task</h2>
+<form class="input-row" id="todo-form-check">
+  <div id="error-check" class="error"></div>
+  <input id="todo-input-check" type="text" placeholder="New task" aria-label="New task" />
+  <input type="date" id="todo-date-input" aria-label="Due date" />
+  <button type="submit">Add</button>
+</form>
+
+<ul id="todo-elements-check"></ul>
 
     <button id="delete-all" type="button">Delete all</button>
 </main>
