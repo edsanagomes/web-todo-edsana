@@ -10,6 +10,7 @@ body {
 
 .input-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   justify-content: center;
   margin-top: 20px;
@@ -32,12 +33,4 @@ body {
   align-items: center;
   padding: 8px;
   border-bottom: 1px solid #eee;
-}
-
-.input-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  margin-top: 20px;
 }

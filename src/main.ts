@@ -56,7 +56,7 @@ const renderTodos = () => {
 
     const dateP = document.createElement('p')
     if (todo.dueDate) {
-      dateP.innerHTML = `Due: <time>${todo.dueDate}</time>`
+      dateP.textContent = 'Due: ${todo.dueDate}'
     } else {
       dateP.textContent = 'no due date'
     }
