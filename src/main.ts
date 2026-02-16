@@ -51,7 +51,7 @@ const renderTodos = () => {
     if (todo.dueDate) {
       dateP.textContent = `Due: ${todo.dueDate}`
 
-      const taskDate = new Date(todo.dueDate)
+      const taskDate = new Date(`${todo.dueDate}T00:00:00`)
       taskDate.setHours(0, 0, 0, 0)
       const diffTime = taskDate.getTime() - today.getTime()
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
@@ -60,13 +60,11 @@ const renderTodos = () => {
         li.classList.add('urgent-overdue')
       } else if (diffDays === 0) {
         li.classList.add('urgent-today')
-      } else if (diffDays >= 2 && diffDays <= 4) {
+      } else if (diffDays >= 1 && diffDays <= 4) {
         li.classList.add('urgent-soon')
       } else if (diffDays > 4) {
         li.classList.add('urgent-later')
       }
-    } else {
-      dateP.textContent = 'no due date'
     }
 
     const removeBtn = document.createElement('button')
