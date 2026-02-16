@@ -1,3 +1,10 @@
+:root {
+  --color-urgent-overdue: #ffadad;
+  --color-urgent-today: #ffd6a5;
+  --color-urgent-soon: #fdffb6;
+  --color-urgent-later: #caffbf;
+}
+
 html,
 body {
   display: flex;
@@ -32,5 +39,22 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 8px;
+  margin: 5px 0;
+  border-radius: 5px;
   border-bottom: 1px solid #eee;
+}
+.urgent-overdue {
+  background-color: var(--color-urgent-overdue);
+}
+
+.urgent-today {
+  background-color: var(--color-urgent-today);
+}
+
+.urgent-soon {
+  background-color: var(--color-urgent-soon);
+}
+
+.urgent-later {
+  background-color: var(--color-urgent-later);
 }

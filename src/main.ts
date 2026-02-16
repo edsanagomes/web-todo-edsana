@@ -27,19 +27,7 @@ function loadTodos(): Todo[] {
 
   try {
     const parsedTodos = JSON.parse(storedTodos)
-    if (!Array.isArray(parsedTodos)) return []
-    for (const todo of parsedTodos) {
-      if (
-        !todo ||
-        typeof todo.id !== 'string' ||
-        typeof todo.text !== 'string' ||
-        typeof todo.completed !== 'boolean'
-      ) {
-        return []
-      }
-    }
-
-    return parsedTodos
+    return Array.isArray(parsedTodos) ? parsedTodos : []
   } catch {
     return []
   }
@@ -49,6 +37,9 @@ const todos: Todo[] = loadTodos()
 const renderTodos = () => {
   list.innerHTML = ''
   input.value = ''
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
   todos.forEach((todo) => {
     const li = document.createElement('li')
     li.className = 'todo-item'
@@ -58,9 +49,22 @@ const renderTodos = () => {
 
     const dateP = document.createElement('p')
     if (todo.dueDate) {
-      dateP.textContent = 'Due: ${todo.dueDate}'
-    } else {
-      dateP.textContent = 'no due date'
+      dateP.textContent = `Due: ${todo.dueDate}`
+
+      const taskDate = new Date(`${todo.dueDate}T00:00:00`)
+      taskDate.setHours(0, 0, 0, 0)
+      const diffTime = taskDate.getTime() - today.getTime()
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+
+      if (diffDays < 0) {
+        li.classList.add('urgent-overdue')
+      } else if (diffDays === 0) {
+        li.classList.add('urgent-today')
+      } else if (diffDays >= 1 && diffDays <= 4) {
+        li.classList.add('urgent-soon')
+      } else if (diffDays > 4) {
+        li.classList.add('urgent-later')
+      }
     }
 
     const removeBtn = document.createElement('button')
@@ -118,14 +122,12 @@ form.addEventListener('submit', (e) => {
   addTodo()
 })
 
-if (deleteAllBtn) {
-  deleteAllBtn.addEventListener('click', () => {
-    if (confirm('Clear entire list?')) {
-      todos.length = 0
-      localStorage.removeItem('todos')
-      renderTodos()
-    }
-  })
-}
+deleteAllBtn.addEventListener('click', () => {
+  if (confirm('Clear entire list?')) {
+    todos.length = 0
+    localStorage.removeItem('todos')
+    renderTodos()
+  }
+})
 
 renderTodos()
