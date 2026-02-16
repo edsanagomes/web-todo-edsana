@@ -1,3 +1,10 @@
+:root {
+  --color-urgent-overdue: #ffadad;
+  --color-urgent-today: #ffd6a5;
+  --color-urgent-soon: #fdffb6;
+  --color-urgent-later: #caffbf;
+}
+
 html,
 body {
   display: flex;
@@ -36,16 +43,18 @@ body {
   border-radius: 5px;
   border-bottom: 1px solid #eee;
 }
-
 .urgent-overdue {
-  background-color: #ffadad;
+  background-color: var(--color-urgent-overdue);
 }
+
 .urgent-today {
-  background-color: #ffd6a5;
+  background-color: var(--color-urgent-today);
 }
+
 .urgent-soon {
-  background-color: #fdffb6;
+  background-color: var(--color-urgent-soon);
 }
+
 .urgent-later {
-  background-color: #caffbf;
+  background-color: var(--color-urgent-later);
 }

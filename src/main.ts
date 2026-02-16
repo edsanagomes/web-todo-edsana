@@ -49,7 +49,7 @@ const renderTodos = () => {
 
     const dateP = document.createElement('p')
     if (todo.dueDate) {
-      dateP.textContent = 'Due: ${todo.dueDate}'
+      dateP.textContent = `Due: ${todo.dueDate}`
 
       const taskDate = new Date(todo.dueDate)
       taskDate.setHours(0, 0, 0, 0)
